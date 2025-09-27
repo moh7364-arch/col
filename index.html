@@ -4,9 +4,482 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>جعفر السيد بوكر - Jaafar Al-Sayed Poker</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/auth.css">
-    <link rel="stylesheet" href="css/game.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .page {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* التأثيرات العامة */
+        .gold-frame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 15px solid transparent;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            background-clip: padding-box;
+            animation: frameGlow 3s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes frameGlow {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .floating-chips {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .floating-chips::before {
+            content: '♠️♥️♦️♣️';
+            position: absolute;
+            font-size: 24px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* التصميم الذهبي */
+        .gold-button {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .gold-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .glowing-text {
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        /* صفحة التسجيل */
+        .auth-container {
+            position: relative;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 50px auto;
+            max-width: 500px;
+            border: 2px solid #ffd700;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .animated-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .poker-chip {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffd700, #ff6b00);
+            animation: chipRotate 4s linear infinite;
+            border: 3px solid #fff;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        @keyframes chipRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #ffd700;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .form-group label {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: #ffd700;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-group input:focus ~ label,
+        .form-group input:valid ~ label {
+            top: -10px;
+            right: 10px;
+            font-size: 12px;
+            background: #000;
+            padding: 0 5px;
+        }
+
+        /* صفحة التحقق الحيوي */
+        .camera-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        #camera-feed {
+            width: 400px;
+            height: 400px;
+            border: 3px solid #ffd700;
+            border-radius: 20px;
+            object-fit: cover;
+        }
+
+        .face-guide {
+            margin: 20px;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+            border-radius: 10px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        /* الصفحة الرئيسية */
+        .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            border-left: 2px solid #ffd700;
+            padding: 20px;
+        }
+
+        .user-profile {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .user-profile img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .main-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-item {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: right;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 215, 0, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* طاولة البوكر */
+        .poker-table {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+
+        .table-surface {
+            width: 800px;
+            height: 400px;
+            background: radial-gradient(circle, #006400 0%, #004d00 100%);
+            border: 20px solid #8B4513;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .table-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .animated-crown {
+            font-size: 40px;
+            animation: crownBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes crownBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .player-seats {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .seat {
+            position: absolute;
+            width: 80px;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .seat[data-seat="1"] { top: 10%; left: 50%; transform: translateX(-50%); }
+        .seat[data-seat="2"] { top: 25%; left: 10%; }
+        .seat[data-seat="3"] { top: 25%; right: 10%; }
+        .seat[data-seat="4"] { bottom: 25%; left: 10%; }
+        .seat[data-seat="5"] { bottom: 25%; right: 10%; }
+        .seat[data-seat="6"] { bottom: 10%; left: 50%; transform: translateX(-50%); }
+
+        .playing-card {
+            font-size: 40px;
+            animation: cardDeal 0.5s ease-out;
+        }
+
+        @keyframes cardDeal {
+            0% { transform: scale(0) rotate(-180deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .game-controls {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+        }
+
+        .control-btn {
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #ff6b00, #ffd700);
+            border: none;
+            border-radius: 20px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-panel {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 300px;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #ffd700;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ffd700;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        /* الإشعارات */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.error {
+            background: #ff4444;
+            color: white;
+        }
+
+        .notification.success {
+            background: #00C851;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* محتوى إضافي */
+        .wallet-content, .settings-content, .levels-content {
+            padding: 20px;
+        }
+
+        .coins-package {
+            display: inline-block;
+            margin: 10px;
+            padding: 20px;
+            background: linear-gradient(45deg, #ffd700, #ff6b00);
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .coins-package:hover {
+            transform: scale(1.1);
+        }
+
+        /* التجاوب مع الشاشات المختلفة */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .main-content {
+                margin-left: 200px;
+            }
+            
+            .table-surface {
+                width: 95%;
+                height: 300px;
+            }
+            
+            .chat-panel {
+                width: 250px;
+                height: 250px;
+            }
+            
+            #camera-feed {
+                width: 300px;
+                height: 300px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- صفحة التسجيل -->
@@ -56,8 +529,8 @@
     <div id="biometric-page" class="page">
         <div class="camera-container">
             <video id="camera-feed" autoplay></video>
-            <div class="face-guide"></div>
-            <button id="capture-btn" class="gold-button">أخذ صورة</button>
+            <div class="face-guide">يرجى النظر إلى الكاميرا</div>
+            <button id="capture-btn" class="gold-button">أخذ صورة للتحقق</button>
         </div>
     </div>
 
@@ -65,7 +538,7 @@
     <div id="main-page" class="page">
         <div class="sidebar">
             <div class="user-profile">
-                <img src="images/user-avatar.jpg" alt="الصورة الشخصية">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNGRkQ3MDAiLz4KPGNpcmNsZSBjeD0iNDAiIGN5PSIzMCIgcj0iMTUiIGZpbGw9IiMwMDAiLz4KPHBhdGggZD0iTTIwIDUwIEMyMCA2MCAzMCA3MCA0MCA3MCBDNTAgNzAgNjAgNjAgNjAgNTAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSI0Ii8+Cjwvc3ZnPg==" alt="الصورة الشخصية">
                 <span id="user-name">جعفر السيد</span>
             </div>
             
@@ -90,7 +563,7 @@
                 <div class="poker-table">
                     <div class="table-surface">
                         <div class="table-logo">
-                            <div class="animated-crown"></div>
+                            <div class="animated-crown">👑</div>
                             <h2>Jaafar Al-Sayed Poker</h2>
                         </div>
                         
@@ -104,41 +577,534 @@
                         </div>
 
                         <div class="game-controls">
-                            <button class="control-btn deal-btn">بدء الجولة</button>
-                            <button class="control-btn bet-btn">رهان</button>
-                            <button class="control-btn fold-btn">سحب</button>
-                            <button class="control-btn restart-btn">إعادة</button>
+                            <button class="control-btn deal-btn">🃏 بدء الجولة</button>
+                            <button class="control-btn bet-btn">💰 رهان</button>
+                            <button class="control-btn fold-btn">❌ سحب</button>
+                            <button class="control-btn restart-btn">🔄 إعادة</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div id="wallet-content" class="content-section">
-                <!-- محتوى المحفظة -->
+                <h2>💰 المحفظة</h2>
+                <div class="balance-section">
+                    <h3>الرصيد الحالي: <span id="current-balance">1,000</span> 💎</h3>
+                </div>
+                
+                <div class="packages-section">
+                    <h3>حزم الجواهر:</h3>
+                    <div class="coins-package" data-amount="100">
+                        <h4>100 💎</h4>
+                        <p>10 $</p>
+                    </div>
+                    <div class="coins-package" data-amount="500">
+                        <h4>500 💎</h4>
+                        <p>45 $</p>
+                    </div>
+                    <div class="coins-package" data-amount="1000">
+                        <h4>1000 💎</h4>
+                        <p>80 $</p>
+                    </div>
+                </div>
             </div>
 
             <div id="settings-content" class="content-section">
-                <!-- محتوى الإعدادات -->
+                <h2>⚙️ الإعدادات</h2>
+                <div class="settings-options">
+                    <div class="setting-item">
+                        <label>الاسم: </label>
+                        <input type="text" id="display-name" value="جعفر السيد">
+                    </div>
+                    <div class="setting-item">
+                        <label>رقم الجوال: </label>
+                        <input type="tel" id="mobile-number" value="+966500000000">
+                    </div>
+                    <div class="setting-item">
+                        <label>اللغة: </label>
+                        <select id="language-select">
+                            <option value="ar">العربية</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                    <button class="gold-button">حفظ التغييرات</button>
+                </div>
             </div>
 
             <div id="levels-content" class="content-section">
-                <!-- محتوى المستويات -->
+                <h2>🎯 مستويات اللعبة</h2>
+                <div class="level-options">
+                    <div class="level-item" data-level="beginner">
+                        <h3>👶 المبتدئ</h3>
+                        <p>الرهان: 10-100 💎</p>
+                    </div>
+                    <div class="level-item" data-level="intermediate">
+                        <h3>🚀 المتوسط</h3>
+                        <p>الرهان: 100-500 💎</p>
+                    </div>
+                    <div class="level-item" data-level="expert">
+                        <h3>🎯 المحترف</h3>
+                        <p>الرهان: 500-2000 💎</p>
+                    </div>
+                    <div class="level-item" data-level="king">
+                        <h3>👑 مستوى الملوك</h3>
+                        <p>الرهان: 2000+ 💎</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="chat-panel">
-            <div class="chat-messages"></div>
+            <div class="chat-messages">
+                <div class="message">مرحبا بك في اللعبة!</div>
+            </div>
             <div class="chat-input">
                 <input type="text" placeholder="اكتب رسالة...">
-                <button>إرسال</button>
+                <button class="gold-button">إرسال</button>
             </div>
         </div>
     </div>
 
-    <script src="js/main.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/game.js"></script>
-    <script src="js/payment.js"></script>
-    <script src="js/chat.js"></script>
+    <script>
+        // الكود الرئيسي للتطبيق
+        class PokerGame {
+            constructor() {
+                this.currentUser = null;
+                this.gameState = 'lobby';
+                this.verificationCode = '123456';
+                this.init();
+            }
+
+            init() {
+                this.loadCountries();
+                this.setupEventListeners();
+                this.checkAuthStatus();
+                this.setupChat();
+            }
+
+            loadCountries() {
+                const countries = [
+                    { code: 'SA', name: 'السعودية', dialCode: '+966' },
+                    { code: 'AE', name: 'الإمارات', dialCode: '+971' },
+                    { code: 'EG', name: 'مصر', dialCode: '+20' },
+                    { code: 'US', name: 'الولايات المتحدة', dialCode: '+1' },
+                    { code: 'GB', name: 'المملكة المتحدة', dialCode: '+44' }
+                ];
+
+                const select = document.getElementById('countryCode');
+                countries.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.dialCode;
+                    option.textContent = `${country.name} (${country.dialCode})`;
+                    select.appendChild(option);
+                });
+            }
+
+            setupEventListeners() {
+                // نموذج التسجيل
+                document.getElementById('register-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleRegistration();
+                });
+
+                // زر التحقق الحيوي
+                document.getElementById('capture-btn').addEventListener('click', () => {
+                    this.captureBiometricData();
+                });
+
+                // التنقل بين الصفحات
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        this.showSection(e.currentTarget.dataset.page);
+                    });
+                });
+
+                // عناصر التحكم في اللعبة
+                document.querySelectorAll('.control-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.handleGameControl(e.target.classList);
+                    });
+                });
+
+                // حزم الجواهر
+                document.querySelectorAll('.coins-package').forEach(pkg => {
+                    pkg.addEventListener('click', () => {
+                        this.handlePackagePurchase(pkg.dataset.amount);
+                    });
+                });
+
+                // مستويات اللعبة
+                document.querySelectorAll('.level-item').forEach(level => {
+                    level.addEventListener('click', () => {
+                        this.selectGameLevel(level.dataset.level);
+                    });
+                });
+            }
+
+            async handleRegistration() {
+                const formData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    countryCode: document.getElementById('countryCode').value,
+                    idDocument: document.getElementById('idDocument').files[0]
+                };
+
+                try {
+                    if (!this.validateForm(formData)) {
+                        this.showError('يرجى ملء جميع الحقول بشكل صحيح');
+                        return;
+                    }
+
+                    await this.startBiometricVerification();
+                    
+                } catch (error) {
+                    this.showError('حدث خطأ أثناء التسجيل');
+                }
+            }
+
+            validateForm(data) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(data.email)) return false;
+
+                const phoneRegex = /^[0-9]{10}$/;
+                if (!phoneRegex.test(data.phone)) return false;
+
+                return true;
+            }
+
+            async startBiometricVerification() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { facingMode: 'user' } 
+                    });
+                    
+                    const video = document.getElementById('camera-feed');
+                    video.srcObject = stream;
+
+                    this.showPage('biometric-page');
+                    this.startHeadTracking();
+
+                } catch (error) {
+                    this.showError('لا يمكن الوصول إلى الكاميرا');
+                }
+            }
+
+            startHeadTracking() {
+                const guide = document.querySelector('.face-guide');
+                const movements = ['الأعلى', 'الأسفل', 'اليسار', 'اليمين'];
+                let currentMovement = 0;
+
+                const movementInterval = setInterval(() => {
+                    if (currentMovement >= movements.length) {
+                        clearInterval(movementInterval);
+                        this.completeBiometricVerification();
+                        return;
+                    }
+
+                    guide.textContent = `يرجى تحريك رأسك إلى ${movements[currentMovement]}`;
+                    currentMovement++;
+                }, 3000);
+            }
+
+            async captureBiometricData() {
+                const video = document.getElementById('camera-feed');
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0);
+                
+                // إيقاف الكاميرا
+                video.srcObject.getTracks().forEach(track => track.stop());
+                
+                this.showSuccess('تم التحقق بنجاح!');
+                setTimeout(() => {
+                    this.sendVerificationCode();
+                }, 1000);
+            }
+
+            sendVerificationCode() {
+                const email = document.getElementById('email').value;
+                
+                this.showVerificationModal();
+                
+                // محاكاة إرسال الرمز
+                console.log(`تم إرسال رمز التحقق ${this.verificationCode} إلى ${email}`);
+            }
+
+            showVerificationModal() {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.8); display: flex; justify-content: center;
+                    align-items: center; z-index: 10000;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="background: #1a1a1a; padding: 30px; border-radius: 15px; border: 2px solid #ffd700; text-align: center;">
+                        <h3 class="glowing-text">التحقق من البريد الإلكتروني</h3>
+                        <p>تم إرسال رمز التحقق إلى بريدك الإلكتروني</p>
+                        <input type="text" id="verification-code" maxlength="6" placeholder="أدخل الرمز" 
+                               style="padding: 10px; margin: 10px; font-size: 18px; text-align: center;">
+                        <br>
+                        <button class="gold-button" id="verify-btn">تحقق</button>
+                        <button class="gold-button" id="resend-btn">إعادة الإرسال</button>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                document.getElementById('verify-btn').addEventListener('click', () => {
+                    this.verifyCode();
+                });
+                
+                document.getElementById('resend-btn').addEventListener('click', () => {
+                    this.resendCode();
+                });
+            }
+
+            verifyCode() {
+                const enteredCode = document.getElementById('verification-code').value;
+                
+                if (enteredCode === this.verificationCode) {
+                    this.completeRegistration();
+                } else {
+                    this.showError('رمز التحقق غير صحيح');
+                }
+            }
+
+            completeRegistration() {
+                const userData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    verified: true,
+                    joinDate: new Date(),
+                    balance: 1000
+                };
+                
+                localStorage.setItem('pokerUser', JSON.stringify(userData));
+                this.showSuccess('تم التسجيل بنجاح!');
+                
+                setTimeout(() => {
+                    document.querySelector('.notification')?.remove();
+                    this.showPage('main-page');
+                    this.initializeGame();
+                }, 2000);
+            }
+
+            completeBiometricVerification() {
+                this.showSuccess('تم التحقق الحيوي بنجاح!');
+                setTimeout(() => {
+                    this.sendVerificationCode();
+                }, 2000);
+            }
+
+            showPage(pageId) {
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+            }
+
+            showSection(sectionId) {
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                document.getElementById(`${sectionId}-content`).classList.add('active');
+                document.querySelector(`[data-page="${sectionId}"]`).classList.add('active');
+            }
+
+            handleGameControl(btnClass) {
+                if (btnClass.contains('deal-btn')) {
+                    this.startNewRound();
+                } else if (btnClass.contains('bet-btn')) {
+                    this.placeBet();
+                } else if (btnClass.contains('fold-btn')) {
+                    this.fold();
+                } else if (btnClass.contains('restart-btn')) {
+                    this.restartGame();
+                }
+            }
+
+            startNewRound() {
+                const game = new PokerRound();
+                game.dealCards();
+                this.animateCardDeal();
+                
+                this.addChatMessage('System', 'بدأت جولة جديدة!');
+            }
+
+            animateCardDeal() {
+                const seats = document.querySelectorAll('.seat');
+                seats.forEach((seat, index) => {
+                    setTimeout(() => {
+                        this.createCardElement(seat);
+                    }, index * 300);
+                });
+            }
+
+            createCardElement(seat) {
+                const cards = ['🂡', '🂱', '🃁', '🃑'];
+                const randomCard = cards[Math.floor(Math.random() * cards.length)];
+                
+                const card = document.createElement('div');
+                card.className = 'playing-card';
+                card.textContent = randomCard;
+                seat.appendChild(card);
+            }
+
+            placeBet() {
+                this.showSuccess('تم وضع الرهان بنجاح!');
+                this.addChatMessage('Player', 'وضع رهاناً');
+            }
+
+            fold() {
+                this.showSuccess('تم السحب من الجولة');
+                this.addChatMessage('Player', 'سحب من الجولة');
+            }
+
+            restartGame() {
+                document.querySelectorAll('.seat').forEach(seat => {
+                    seat.innerHTML = '';
+                });
+                this.showSuccess('تم إعادة تشغيل الجولة');
+                this.addChatMessage('System', 'أعيد تشغيل الجولة');
+            }
+
+            handlePackagePurchase(amount) {
+                this.showSuccess(`تم شراء حزمة ${amount} 💎`);
+                this.updateBalance(parseInt(amount));
+            }
+
+            selectGameLevel(level) {
+                const levels = {
+                    beginner: 'المبتدئ',
+                    intermediate: 'المتوسط', 
+                    expert: 'المحترف',
+                    king: 'الملوك'
+                };
+                this.showSuccess(`تم اختيار مستوى ${levels[level]}`);
+            }
+
+            updateBalance(amount) {
+                const user = JSON.parse(localStorage.getItem('pokerUser'));
+                user.balance += amount;
+                localStorage.setItem('pokerUser', JSON.stringify(user));
+                document.getElementById('current-balance').textContent = user.balance.toLocaleString();
+            }
+
+            setupChat() {
+                const chatInput = document.querySelector('.chat-input input');
+                const chatButton = document.querySelector('.chat-input button');
+
+                chatButton.addEventListener('click', () => {
+                    this.sendChatMessage(chatInput.value);
+                    chatInput.value = '';
+                });
+
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.sendChatMessage(chatInput.value);
+                        chatInput.value = '';
+                    }
+                });
+            }
+
+            sendChatMessage(message) {
+                if (message.trim()) {
+                    this.addChatMessage('You', message);
+                    // محاكاة رد اللاعبين الآخرين
+                    setTimeout(() => {
+                        const responses = ['حظاً طيباً!', 'رهان جيد', 'مستوى رائع'];
+                        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                        this.addChatMessage('Player', randomResponse);
+                    }, 1000);
+                }
+            }
+
+            addChatMessage(sender, message) {
+                const chatMessages = document.querySelector('.chat-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message';
+                messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            showError(message) {
+                this.showNotification(message, 'error');
+            }
+
+            showSuccess(message) {
+                this.showNotification(message, 'success');
+            }
+
+            showNotification(message, type) {
+                // إزالة الإشعارات القديمة
+                document.querySelectorAll('.notification').forEach(n => n.remove());
+                
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+
+            checkAuthStatus() {
+                const savedUser = localStorage.getItem('pokerUser');
+                if (savedUser) {
+                    this.currentUser = JSON.parse(savedUser);
+                    this.showPage('main-page');
+                    this.initializeGame();
+                }
+            }
+
+            initializeGame() {
+                if (this.currentUser) {
+                    document.getElementById('user-name').textContent = 
+                        `${this.currentUser.firstName} ${this.currentUser.lastName}`;
+                    document.getElementById('current-balance').textContent = 
+                        this.currentUser.balance.toLocaleString();
+                }
+            }
+
+            resendCode() {
+                this.showSuccess('تم إعادة إرسال رمز التحقق');
+            }
+        }
+
+        // فئة إدارة جولة البوكر
+        class PokerRound {
+            constructor() {
+                this.players = [];
+                this.communityCards = [];
+                this.currentPlayer = 0;
+                this.pot = 0;
+            }
+
+            dealCards() {
+                // محاكاة توزيع الأوراق
+                console.log('تم توزيع الأوراق على اللاعبين');
+            }
+        }
+
+        // تهيئة التطبيق عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            window.pokerGame = new PokerGame();
+        });
+    </script>
 </body>
-</html>
+    </html>
