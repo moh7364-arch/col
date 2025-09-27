@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جعفر السيد بوكر - Jaafar Al-Sayed Poker</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+    <!-- صفحة التسجيل -->
+    <div id="auth-page" class="page active">
+        <div class="gold-frame"></div>
+        <div class="floating-chips"></div>
+        
+        <div class="auth-container">
+            <div class="logo-section">
+                <div class="animated-logo">
+                    <div class="poker-chip"></div>
+                    <h1 class="glowing-text">Jaafar Al-Sayed Poker</h1>
+                    <div class="poker-chip"></div>
+                </div>
+            </div>
+
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <input type="text" id="firstName" required>
+                    <label for="firstName">الاسم الأول</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="lastName" required>
+                    <label for="lastName">الاسم الأخير</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" required>
+                    <label for="email">البريد الإلكتروني</label>
+                </div>
+                <div class="form-group">
+                    <select id="countryCode" required>
+                        <option value="">اختر الدولة</option>
+                    </select>
+                    <input type="tel" id="phone" required>
+                    <label for="phone">رقم الهاتف</label>
+                </div>
+                <div class="form-group">
+                    <input type="file" id="idDocument" accept="image/*" required>
+                    <label for="idDocument">رفع الهوية</label>
+                </div>
+                <button type="submit" class="gold-button">متابعة التسجيل</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- صفحة التحقق الحيوي -->
+    <div id="biometric-page" class="page">
+        <div class="camera-container">
+            <video id="camera-feed" autoplay></video>
+            <div class="face-guide"></div>
+            <button id="capture-btn" class="gold-button">أخذ صورة</button>
+        </div>
+    </div>
+
+    <!-- الصفحة الرئيسية -->
+    <div id="main-page" class="page">
+        <div class="sidebar">
+            <div class="user-profile">
+                <img src="images/user-avatar.jpg" alt="الصورة الشخصية">
+                <span id="user-name">جعفر السيد</span>
+            </div>
+            
+            <nav class="main-nav">
+                <button class="nav-item active" data-page="home">
+                    <span>🏠 الرئيسية</span>
+                </button>
+                <button class="nav-item" data-page="wallet">
+                    <span>💰 المحفظة</span>
+                </button>
+                <button class="nav-item" data-page="settings">
+                    <span>⚙️ الإعدادات</span>
+                </button>
+                <button class="nav-item" data-page="levels">
+                    <span>🎯 المستويات</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <div id="home-content" class="content-section active">
+                <div class="poker-table">
+                    <div class="table-surface">
+                        <div class="table-logo">
+                            <div class="animated-crown"></div>
+                            <h2>Jaafar Al-Sayed Poker</h2>
+                        </div>
+                        
+                        <div class="player-seats">
+                            <div class="seat" data-seat="1"></div>
+                            <div class="seat" data-seat="2"></div>
+                            <div class="seat" data-seat="3"></div>
+                            <div class="seat" data-seat="4"></div>
+                            <div class="seat" data-seat="5"></div>
+                            <div class="seat" data-seat="6"></div>
+                        </div>
+
+                        <div class="game-controls">
+                            <button class="control-btn deal-btn">بدء الجولة</button>
+                            <button class="control-btn bet-btn">رهان</button>
+                            <button class="control-btn fold-btn">سحب</button>
+                            <button class="control-btn restart-btn">إعادة</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wallet-content" class="content-section">
+                <!-- محتوى المحفظة -->
+            </div>
+
+            <div id="settings-content" class="content-section">
+                <!-- محتوى الإعدادات -->
+            </div>
+
+            <div id="levels-content" class="content-section">
+                <!-- محتوى المستويات -->
+            </div>
+        </div>
+
+        <div class="chat-panel">
+            <div class="chat-messages"></div>
+            <div class="chat-input">
+                <input type="text" placeholder="اكتب رسالة...">
+                <button>إرسال</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/payment.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>
